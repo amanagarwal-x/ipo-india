@@ -41,7 +41,7 @@ class Ipo(BaseModel):
                 if property in ['open_date', 'close_date']:
                     value = self.__datetime_to_readable_date(value)
                 if property == 'name':
-                    readable_ipo += f'{value}\n'
+                    readable_ipo += f'**{value}**\n'
                 else:
                     readable_ipo += f'{readable_key}: {value}\n'
         return readable_ipo
