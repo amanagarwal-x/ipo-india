@@ -1,5 +1,5 @@
-from ipo import Ipo
-from ipo_scraper import TopShareBrokersIPO
+from ipo_india.ipo import Ipo
+from ipo_india.ipo_scraper import TopShareBrokersIPO
 import logging
 def get_ipos(readable: bool = False,
              open_ipos: bool = False,
