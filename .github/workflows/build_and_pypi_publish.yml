@@ -33,7 +33,7 @@ jobs:
         shell: bash
         
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@v1
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           username: ${{ secrets.PYPI_TOKEN_USERNAME }}
           password: ${{ secrets.PYPI_API_TOKEN }}
