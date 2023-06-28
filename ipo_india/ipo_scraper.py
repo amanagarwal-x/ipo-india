@@ -71,19 +71,19 @@ class TopShareBrokersIPO:
         for row in rows:
             if row.find_all('td'):
                 try:
-                    qib_subscriptions.append(row.find_all('td')[2].text)
+                    qib_subscriptions.append(row.find_all('td')[4].text)
                 except:
                     qib_subscriptions.append("")
                 try:
-                    rii_subscriptions.append(row.find_all('td')[3].text)
+                    rii_subscriptions.append(row.find_all('td')[5].text)
                 except:
                     rii_subscriptions.append("")
                 try:
-                    ret_subscriptions.append(row.find_all('td')[4].text)
+                    ret_subscriptions.append(row.find_all('td')[6].text)
                 except:
                     ret_subscriptions.append("")
                 try:
-                    total_subscriptions.append(row.find_all('td')[5].text)
+                    total_subscriptions.append(row.find_all('td')[7].text)
                 except:
                     total_subscriptions.append("")
 
