@@ -18,7 +18,7 @@ class TopShareBrokersIPO:
     def _get_ipos_with_gmp(cls):
         rows = cls.__get_report_data_rows(cls.GMP_URL)
 
-        ipo_names = [row.find_all('td')[1].text for row in rows if row.find_all('td')]
+        ipo_names = [row.find_all('td')[0].text for row in rows if row.find_all('td')]
         ipo_open_dates = []
         ipo_close_dates = []
         gmps = []
@@ -56,7 +56,14 @@ class TopShareBrokersIPO:
     def _get_ipos_with_subscription(cls):
         rows = cls.__get_report_data_rows(cls.SUBSCRIPTION_URL)
         
-        ipo_names = [row.find_all('td')[0].text for row in rows if row.find_all('td')]
+        # ipo_names = [row.find_all('td')[1].text for row in rows if row.find_all('td')]
+        ipo_names = []
+        for row in rows:
+          try:
+            if row.find_all('td'):
+              ipo_names.append(row.find_all('td')[1].text)
+          except:
+            pass
         qib_subscriptions = []
         rii_subscriptions = []
         ret_subscriptions = []
