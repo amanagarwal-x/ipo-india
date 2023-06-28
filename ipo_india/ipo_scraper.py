@@ -18,7 +18,7 @@ class TopShareBrokersIPO:
     def _get_ipos_with_gmp(cls):
         rows = cls.__get_report_data_rows(cls.GMP_URL)
 
-        ipo_names = [row.find_all('td')[0].text for row in rows if row.find_all('td')]
+        ipo_names = [row.find_all('td')[1].text for row in rows if row.find_all('td')]
         ipo_open_dates = []
         ipo_close_dates = []
         gmps = []
