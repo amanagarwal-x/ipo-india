@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-__version__ = '0.0.9'
+__version__ = '0.0.10'
 setup(
     name='ipo_india',
     version=__version__,
