@@ -4,6 +4,8 @@ from datetime import datetime
 from pytz import timezone
 import logging
 import sys
+from typing import Union
+
 logging.basicConfig(filemode='a',
                     format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
                     datefmt='%H:%M:%S',
@@ -16,7 +18,7 @@ class TopShareBrokersIPO:
     
     @classmethod
     def _get_ipos_with_gmp(cls):
-        rows = cls.__get_report_data_rows(cls.GMP_URL)
+        rows = cls.__get_report_data_table(cls.GMP_URL).find_all('tr')
 
         ipo_names = [row.find_all('td')[0].text for row in rows if row.find_all('td')]
         ipo_open_dates = []
@@ -54,53 +56,66 @@ class TopShareBrokersIPO:
     
     @classmethod
     def _get_ipos_with_subscription(cls):
-        rows = cls.__get_report_data_rows(cls.SUBSCRIPTION_URL)
+        table = cls.__get_report_data_table(cls.SUBSCRIPTION_URL)
+        rows = table.find_all('tr')
         
-        # ipo_names = [row.find_all('td')[1].text for row in rows if row.find_all('td')]
+        name_column_table_index = cls._find_column_index(table, 'name')
+        name_column_table_index = cls._find_column_index(table, 'ipo') if not name_column_table_index else name_column_table_index
+        qib_column_table_index = cls._find_column_index(table, 'qib')
+        nii_column_table_index = cls._find_column_index(table, 'nii')
+        ret_column_table_index = cls._find_column_index(table, 'rii')
+        total_column_table_index = cls._find_column_index(table, 'total')
+        
         ipo_names = []
-        for row in rows:
-          try:
-            if row.find_all('td'):
-              ipo_names.append(row.find_all('td')[1].text)
-          except:
-            pass
         qib_subscriptions = []
-        rii_subscriptions = []
+        nii_subscriptions = []
         ret_subscriptions = []
         total_subscriptions = []
         for row in rows:
             if row.find_all('td'):
                 try:
-                    qib_subscriptions.append(row.find_all('td')[3].text)
+                    ipo_names.append(row.find_all('td')[name_column_table_index].text)
+                except Exception as e:
+                    ipo_names.append(f"Exception {e}")
+                try:
+                    qib_subscriptions.append(row.find_all('td')[qib_column_table_index].text)
                 except:
                     qib_subscriptions.append("")
                 try:
-                    rii_subscriptions.append(row.find_all('td')[4].text)
+                    nii_subscriptions.append(row.find_all('td')[nii_column_table_index].text)
                 except:
-                    rii_subscriptions.append("")
+                    nii_subscriptions.append("")
                 try:
-                    ret_subscriptions.append(row.find_all('td')[5].text)
+                    ret_subscriptions.append(row.find_all('td')[ret_column_table_index].text)
                 except:
                     ret_subscriptions.append("")
                 try:
-                    total_subscriptions.append(row.find_all('td')[6].text)
+                    total_subscriptions.append(row.find_all('td')[total_column_table_index].text)
                 except:
                     total_subscriptions.append("")
 
         ipo_subscriptions = {}
-        for name, qib, rii, ret, total in zip(ipo_names, qib_subscriptions, rii_subscriptions, ret_subscriptions, total_subscriptions):
-            if name and qib and rii and ret and total:
-                ipo_subscriptions[name] = {'qib': qib, 'rii': rii, 'ret': ret, 'total': total}
+        for name, qib, nii, ret, total in zip(ipo_names, qib_subscriptions, nii_subscriptions, ret_subscriptions, total_subscriptions):
+            if name and qib and nii and ret and total:
+                ipo_subscriptions[name] = {'qib': qib, 'nii': nii, 'ret': ret, 'total': total}
         return ipo_subscriptions
-        
+    
     @staticmethod
-    def __get_report_data_rows(request_url):
+    def _find_column_index(table, column_name: str) -> Union[None, int]:
+        column_index = None
+        for index, column in enumerate(table.find_all('th')):
+            if column_name in column.text.lower():
+                column_index = index
+                break
+        return column_index
+    
+    @staticmethod
+    def __get_report_data_table(request_url):
         r = requests.get(request_url)
         soup = BeautifulSoup(r.content, 'html5lib')
         report_data_div = soup.find(id = "report_data")
         table = report_data_div.find('table')
-        rows = table.find_all('tr')
-        return rows
+        return table
 
     @classmethod
     def get_ipos(cls):

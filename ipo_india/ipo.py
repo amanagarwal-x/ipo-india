@@ -10,7 +10,7 @@ class Ipo(BaseModel):
     gmp: Union[float, int, str]
     
     qib : Union[float, str] = ''
-    rii : Union[float, str] = ''
+    nii : Union[float, str] = ''
     ret : Union[float, str] = ''
     total : Union[float, str] = ''
     
@@ -36,7 +36,7 @@ class Ipo(BaseModel):
             if value:
                 # Convert snake case of the keys to readable format
                 readable_key = property.replace('_', ' ').title()
-                if property in ['gmp', 'qib', 'rii', 'ret']:
+                if property in ['gmp', 'qib', 'nii', 'ret']:
                     readable_key = readable_key.upper()
                 if property in ['open_date', 'close_date']:
                     value = self.__datetime_to_readable_date(value)
