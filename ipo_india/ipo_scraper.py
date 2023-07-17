@@ -165,4 +165,7 @@ class TopShareBrokersIPO:
     
     @staticmethod
     def __parse_ipo_date(date_str):
-        return datetime.strptime(date_str, '%d-%b-%Y')
+        try:
+          return datetime.strptime(date_str, '%d-%b-%Y')
+        except:
+          return datetime.strptime(date_str + '-2023', '%d-%b-%Y')
