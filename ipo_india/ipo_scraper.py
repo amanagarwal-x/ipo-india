@@ -18,9 +18,18 @@ class TopShareBrokersIPO:
     
     @classmethod
     def _get_ipos_with_gmp(cls):
-        rows = cls.__get_report_data_table(cls.GMP_URL).find_all('tr')
-
-        ipo_names = [row.find_all('td')[0].text for row in rows if row.find_all('td')]
+        table = cls.__get_report_data_table(cls.GMP_URL)
+        rows = table.find_all('tr')
+      
+        name_column_table_index = cls._find_column_index(table, 'name')
+        name_column_table_index = cls._find_column_index(table, 'ipo') if not name_column_table_index else name_column_table_index
+        open_date_column_table_index = cls._find_column_index(table, 'open')
+        close_date_column_table_index = cls._find_column_index(table, 'close')
+        price_column_table_index = cls._find_column_index(table, 'price')
+        gmp_column_table_index = cls._find_column_index(table, 'gmp')
+      
+        # ipo_names = [row.find_all('td')[0].text for row in rows if row.find_all('td')]
+        ipo_names = []
         ipo_open_dates = []
         ipo_close_dates = []
         gmps = []
@@ -28,23 +37,28 @@ class TopShareBrokersIPO:
         for row in rows:
             if row.find_all('td'):
                 try:
-                    open_date = row.find_all('td')[-4].text
+                    ipo_names.append(row.find_all('td')[name_column_table_index].text)
+                except Exception as e:
+                    # ipo_names.append(f"Exception {e}")
+                    logging.exception("Could not parse IPO name")
+                try:
+                    open_date = row.find_all('td')[open_date_column_table_index].text
                     open_date = cls.__parse_ipo_date(open_date)
                     ipo_open_dates.append(open_date)
                 except:
                     ipo_open_dates.append("")
                 try:
-                    close_date = row.find_all('td')[-3].text
+                    close_date = row.find_all('td')[close_date_column_table_index].text
                     close_date = cls.__parse_ipo_date(close_date)
                     ipo_close_dates.append(close_date)
                 except:
                     ipo_close_dates.append("")
                 try:
-                    gmps.append(row.find_all('td')[1].text)
+                    gmps.append(row.find_all('td')[gmp_column_table_index].text)
                 except:
                     gmps.append("")
                 try:
-                    ipo_prices.append(row.find_all('td')[-6].text)
+                    ipo_prices.append(row.find_all('td')[price_column_table_index].text)
                 except:
                     ipo_prices.append("")
     
